@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<script src="index.js"></script>
+	</head>
+	<body>
+		<form>
+		  <input type="text" id="fname" name="fname" value="John"><br>
+		  <input type="text" id="lname" name="lname" value="Doe"><br><br>
+		  <input type="email" id="email" name="email" value="abc@def.com"><br><br>
+		  <button class= "form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
+		</form>
+
+		<script src="up_loader.1.1.4.js"></script>
+		<script defer src="https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js"></script>
+		<script type="text/javascript">
+		    ttd_dom_ready( function() {
+                window.ttd.enableDebug();
+		        if (typeof TTDUniversalPixelApi === 'function') {
+		            var universalPixelApi = new TTDUniversalPixelApi();
+		            var uidConfig = {
+		            	"baseUrl": "http://localhost:18080",
+        			    "subscriptionId": "4WvryDGbR5",
+        			    "serverPublicKey": "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
+            	        "cssSelectors": ["input[type=email]"],
+				        "detectionSubject": ["email"],
+				        "detectionEventType": "onclick",
+				        "triggerElements": ["button.form-submit"]
+		            }
+		            universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null, uidConfig);
+		        }
+		    });
+		</script>
+
+	</body>
+</html>

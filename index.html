@@ -1,17 +1,35 @@
-<!DOCTYPE html>
 <html>
-<body>
+    <head>
+        <script src="pixel/index.js"></script>
+    </head>
+    <body>
+        <form>
+          <input type="text" id="fname" name="fname" value="John"><br>
+          <input type="text" id="lname" name="lname" value="Doe"><br><br>
+          <input type="email" id="email" name="email" value="abc@def.com"><br><br>
+          <button class= "form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
+        </form>
 
-<h1>This is a dummy landing page.</h1>
+        <script src="pixel/up_loader.1.1.4.js"></script>
+        <script defer src="https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js"></script>
+        <script type="text/javascript">
+            ttd_dom_ready( function() {
+                window.ttd.enableDebug();
+                if (typeof TTDUniversalPixelApi === 'function') {
+                    var universalPixelApi = new TTDUniversalPixelApi();
+                    var uidConfig = {
+                        "baseUrl": "https://operator-integ.uidapi.com",
+                        "subscriptionId": "E8ZovjHeKL",
+                        "serverPublicKey": "UID2-X-I-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEv7bSCkEXngLEeRtuXEwzeua3TD+o9IPF7zx9YVKeen0xN2fZsZwtjXMH4HVPHUz6CBVaUBULijuk/WIkLv4mDQ==",
+                        "cssSelectors": ["input[type=email]"],
+                        "detectionSubject": ["email"],
+                        "detectionEventType": "onclick",
+                        "triggerElements": ["button.form-submit"]
+                    }
+                    universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null, uidConfig);
+                }
+            });
+        </script>
 
-<script src="https://js.adsrvr.org/up_loader.1.1.0.js" type="text/javascript"></script>
-<script type="text/javascript">
-    ttd_dom_ready( function() {
-        if (typeof TTDUniversalPixelApi === 'function') {
-            var universalPixelApi = new TTDUniversalPixelApi();
-            universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up");
-        }
-    });
-</script>
-</body>
+    </body>
 </html>
