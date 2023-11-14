@@ -10,77 +10,26 @@
 		  <button class= "form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
 		</form>
 
-		<script src="wip.js"></script>
+		<script src="up_loader.1.1.4.js"></script>
 		<script defer src="https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js"></script>
 		<script type="text/javascript">
-			// document.addEventListener('DOMContentLoaded', function(){
-			// 	window.ttd.disableLog();
-			// 	window.ttd.startDetection();
-
-			// 	window.addEventListener("detected-identifier", function(e){
-			// 		console.log("Identifier caught from detection:  - ", e.detail);
-			// 		handleUidGeneration(e.detail);
-			// 	});
-			// }, false);
-
-			const clientSideConfig = {
-			  subscriptionId: "4WvryDGbR5",
-			  serverPublicKey: "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
-			};
-
-			async function waitForUID(){
-				window.ttd.disableLog();
-				window.ttd.startDetection();
-				window.addEventListener("detected-identifier", async function(e){
-					console.log("Identifier caught from detection:  - ", e.detail);
-					var email = e.detail.identifier;
-			        await __uid2.setIdentityFromEmail(
-				          email,
-				          clientSideConfig
-		        );
-				});
-			}
-
-			function firePixelWithUID(token){
-				console.log("firePixelWithUID,", token);
-			}
-
-			// When the UID2 SDK is executed, it will look for these callbacks and invoke them.
-			window.__uid2 = window.__uid2 || {};
-			window.__uid2.callbacks = window.__uid2.callbacks || [];
-			window.__uid2.callbacks.push(async (eventType, payload) => {
-			  switch (eventType) {
-			    case "SdkLoaded":
-			      // The SdkLoaded event occurs just once.
-			      console.log("#SdkLoaded")
-			      __uid2.init({
-			      	baseUrl: "http://localhost:8080",
-			      });
-			      break;
-			 
-			    case "InitCompleted":
-			      console.log("#InitCompleted")
-			      if (payload.identity) {
-			      	console.log("found identity", payload.identity);
-			      	firePixelWithUID(payload.identity.advertising_token);
-			      }
-			      else {
-			      	console.log("identity not found");
-			      	await waitForUID();
-			      }
-			      // The InitCompleted event occurs just once.
-			      //
-			      // If there was a valid UID2 token, it will be in payload.identity.
-			      break;
-			 
-			    case "IdentityUpdated":
-			      console.log("#IdentityUpdated", payload);
-			      // The IdentityUpdated event will happen when a UID2 token was generated or refreshed.
-		      	  firePixelWithUID(payload.identity.advertising_token)
-			      break;
-			  }
-			});
-
+		    ttd_dom_ready( function() {
+                window.ttd.enableDebug();
+		        if (typeof TTDUniversalPixelApi === 'function') {
+		            var universalPixelApi = new TTDUniversalPixelApi();
+		            var uidConfig = {
+		            	"baseUrl": "http://localhost:18080",
+        			    "subscriptionId": "4WvryDGbR5",
+        			    "serverPublicKey": "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
+            	        "cssSelectors": ["input[type=email]"],
+				        "detectionSubject": ["email"],
+				        "detectionEventType": "onclick",
+				        "triggerElements": ["button.form-submit"]
+		            }
+		            universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null, uidConfig);
+		        }
+		    });
 		</script>
+
 	</body>
 </html>
