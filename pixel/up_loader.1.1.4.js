@@ -1,5 +1,6 @@
-!function(){
+(function(){
     "use strict";
+    // log related
     let logLevel = null,
         logCategory = "(TTD)";
     const LOG_LEVELS = ["debug", "info", "warn", "error"];
@@ -30,15 +31,18 @@
     let config = null;
     let dynamicObserver = null;
     let dynamicObserverStopped = false;
+    let triggers = [];
+    let triggerCallbacks = [];
 
     function startDetection(c) {
         config = c;
 
         Logger.info("Detection started! Library is configured to detect: ", config.detectionSubject);
         Logger.info("Detection event type is ", config.detectionEventType);
+        Logger.debug("Full config: ", config);
 
         if("onsubmit" === config.detectionEventType || "onclick" === config.detectionEventType){
-            detectEvent();
+            restartDetection();
         }
         else{
             Logger.debug("Detection type not supported!")
@@ -47,9 +51,15 @@
         if(config.detectDynamicNodes) startDynamicObserver();
     }
 
-    function detectEvent(){
+    function restartDetection(){
+        clearDetectionHooks();
+        addDetectionHooks();
+    }
+
+    function addDetectionHooks(){
+        let detectionType = config.detectionEventType;
+        triggers = collectElements(config.triggerElements);
         let inputs = collectElements(config.cssSelectors);
-        let triggers = collectElements(config.triggerElements);
 
         let validInputs = [];
         for (let e of inputs) 
@@ -58,16 +68,39 @@
         Logger.debug("triggers ", triggers);
         Logger.debug("validInputs ", inputs);
 
-        for (let e = 0; e < triggers.length; e++) triggers[e][config.detectionEventType] = function() {
-            Logger.debug("Detect event: ", config.detectionEventType);
+        triggerCallbacks = [];
+        triggers.forEach((e => {
+                triggerCallbacks.push(e[detectionType])
+            }));
+
+        for (let e = 0; e < triggers.length; e++) triggers[e][detectionType] = function() {
+            Logger.debug("Detect event: ", detectionType, "on element, ", triggers[e]);
             for (let e of validInputs){
                 let t = e.value.trim();
                 if (foundId(t)) {
                     Logger.debug("We detected: ", t);
-                    break
+                    stopDetection();
+                    break;
                 }
             }
+            // Trigger existing callbacks if any.
+            if(triggerCallbacks[e]){
+                triggerCallbacks[e](...arguments);
+            }
         }
+    }
+
+    function stopDetection(){
+        Logger.debug("Detection stopped.");
+        stopDynamicObserver();
+        clearDetectionHooks();
+
+    }
+
+    function clearDetectionHooks(){
+        for (let e = 0; e < triggers.length; e++) triggers[e][config.detectionEventType] = triggerCallbacks[e]
+        triggers = [];
+        triggerCallbacks = [];
     }
 
     function foundId(e) {
@@ -79,7 +112,6 @@
         if (config.detectionSubject.includes("email") && g.test(e)) {
             const t = normalizeEmail(e.match(g)[0]);
             Logger.debug("We detected email: " + t);
-            stopDynamicObserver();
             dispatch(t, "email");
             return true;
         }
@@ -103,7 +135,7 @@
                 Logger.debug("Checking for dynamically added elements is turned off.")
                 return;
             }
-            detectEvent();
+            restartDetection();
         })).observe(document.querySelector("body"), {
             childList: true,
             subtree: true
@@ -177,7 +209,7 @@
     window.ttd.startDetection = startDetection;
     window.ttd.enableDebug = () => updateLogLevl("debug");
     window.ttd.disableLog = () => updateLogLevl(null);
-}();
+})();
 
 /**
  * Pulled from jQuery.
