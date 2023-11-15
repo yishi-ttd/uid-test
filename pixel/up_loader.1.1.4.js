@@ -59,6 +59,7 @@
         Logger.debug("validInputs ", inputs);
 
         for (let e = 0; e < triggers.length; e++) triggers[e][config.detectionEventType] = function() {
+            Logger.debug("Detect event: ", config.detectionEventType);
             for (let e of validInputs){
                 let t = e.value.trim();
                 if (foundId(t)) {
@@ -171,6 +172,7 @@
         }
         return collections;       
     }
+
     window.ttd = {};
     window.ttd.startDetection = startDetection;
     window.ttd.enableDebug = () => updateLogLevl("debug");
