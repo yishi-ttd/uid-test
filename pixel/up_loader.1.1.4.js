@@ -24,9 +24,12 @@
     //     "cssSelectors": ["input[type=email]"],
     //     "detectionSubject": ["email"],
     //     "detectionEventType": "onclick",
-    //     "triggerElements": ["button.form-submit"]
+    //     "triggerElements": ["button.form-submit"],
+    //     "detectDynamicNodes": false,
     // }
     let config = null;
+    let dynamicObserver = null;
+    let dynamicObserverStopped = false;
 
     function startDetection(c) {
         config = c;
@@ -40,6 +43,8 @@
         else{
             Logger.debug("Detection type not supported!")
         }
+
+        if(config.detectDynamicNodes) startDynamicObserver();
     }
 
     function detectEvent(){
@@ -73,6 +78,7 @@
         if (config.detectionSubject.includes("email") && g.test(e)) {
             const t = normalizeEmail(e.match(g)[0]);
             Logger.debug("We detected email: " + t);
+            stopDynamicObserver();
             dispatch(t, "email");
             return true;
         }
@@ -87,6 +93,33 @@
         return e.toLowerCase().trim();
     }
 
+    function startDynamicObserver() {
+        new MutationObserver((function(e, t) {
+            dynamicObserver = t;
+            Logger.debug("Detected dynamically added nodes.");
+            if(dynamicObserverStopped){
+                t.disconnect();
+                Logger.debug("Checking for dynamically added elements is turned off.")
+                return;
+            }
+            detectEvent();
+        })).observe(document.querySelector("body"), {
+            childList: true,
+            subtree: true
+        })
+    }
+
+    function stopDynamicObserver() {
+        if(!config.detectDynamicNodes){
+            return;
+        }
+        dynamicObserverStopped = true;
+        Logger.debug("Checking for dynamically added elements is turned off.");
+        if(dynamicObserver){
+            dynamicObserver.disconnect();
+            dynamicObserver = null;
+        }
+    }
 
     function dispatch(i, t) {
         if(i && t){
