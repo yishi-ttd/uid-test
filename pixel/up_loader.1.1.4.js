@@ -62,9 +62,8 @@
     function argsToSdkFunction(args){
         const method = args[0];
         const params = args[1];
-        console.log(method, params);
         switch (method) {
-            case "identifier":
+            case "setIdentifier":
                  setIdentifier(params);
                  break;
             default:
