@@ -4,4 +4,13 @@ document.addEventListener('DOMContentLoaded', function(){
 		e.preventDefault();
 		console.log("click triggered");
 	})
+
+	var setIdBtn = document.getElementById("setIdBtn");
+	setIdBtn.addEventListener("click",function(e){
+		window.ttdPixelEventsLayer  = window.ttdPixelEventsLayer || [];
+		window.ttdPixelEventsLayer.push(["identifier", {
+			"type":"email",
+			"identifier":"1@abc.com"
+		}]);
+	})
 }, false);

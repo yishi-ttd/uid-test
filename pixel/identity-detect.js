@@ -39,7 +39,7 @@
         	detectEvent();
         }
         else{
-        	Logger.debug("Detection type not supported!")
+        	Logger.debug("Detection type not supported! We will not start auto detection.");
         }
     }
 

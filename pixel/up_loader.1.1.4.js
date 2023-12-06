@@ -1,5 +1,6 @@
-!function(){
+(function() {
     "use strict";
+    // log related
     let logLevel = null,
         logCategory = "(TTD)";
     const LOG_LEVELS = ["debug", "info", "warn", "error"];
@@ -15,7 +16,7 @@
         }
     }, e)), {});
 
-    function updateLogLevl(l){
+    function updateLogLevl(l) {
         logLevel = l
     }
 
@@ -25,53 +26,108 @@
     //     "detectionSubject": ["email"],
     //     "detectionEventType": "onclick",
     //     "triggerElements": ["button.form-submit"],
-    //     "detectDynamicNodes": false,
+    //     "detectDynamicNodes": false
     // }
     let config = null;
     let dynamicObserver = null;
-    let dynamicObserverStopped = false;
+    let triggers = [];
+    let triggerCallbacks = [];
 
     function startDetection(c) {
         config = c;
 
         Logger.info("Detection started! Library is configured to detect: ", config.detectionSubject);
         Logger.info("Detection event type is ", config.detectionEventType);
+        Logger.debug("Full config: ", config);
 
         if("onsubmit" === config.detectionEventType || "onclick" === config.detectionEventType){
-            detectEvent();
+            restartDetection();
+            if(config.detectDynamicNodes) startDynamicObserver();
         }
         else{
-            Logger.debug("Detection type not supported!")
+            Logger.debug("Detection type not supported! We will not start auto detection.");
         }
 
-        if(config.detectDynamicNodes) startDynamicObserver();
+        // Check events layer after we started the detection.
+        window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
+        // Trigger existing events, in case identifier event is pushed before js load.
+        window.ttdPixelEventsLayer.forEach(argsToSdkFunction);
+        window.ttdPixelEventsLayer.push = function (args) {
+            Array.prototype.push.call(window.ttdPixelEventsLayer, args);
+            argsToSdkFunction(args);
+            return this.length;
+        };
     }
 
-    function detectEvent(){
+    function argsToSdkFunction(args){
+        const method = args[0];
+        const params = args[1];
+        console.log(method, params);
+        switch (method) {
+            case "identifier":
+                 setIdentifier(params);
+                 break;
+            default:
+              throw "method not implemented";
+        }
+    }
+
+    function restartDetection() {
+        clearDetectionHooks();
+        addDetectionHooks();
+    }
+
+    function addDetectionHooks() {
+        let detectionType = config.detectionEventType;
+        triggers = collectElements(config.triggerElements);
         let inputs = collectElements(config.cssSelectors);
-        let triggers = collectElements(config.triggerElements);
 
         let validInputs = [];
-        for (let e of inputs) 
+        for (let e of inputs) {
             e && e.tagName && "INPUT" === e.tagName && validInputs.push(e);
+        }
 
         Logger.debug("triggers ", triggers);
         Logger.debug("validInputs ", inputs);
 
-        for (let e = 0; e < triggers.length; e++) triggers[e][config.detectionEventType] = function() {
-            Logger.debug("Detect event: ", config.detectionEventType);
-            for (let e of validInputs){
-                let t = e.value.trim();
-                if (foundId(t)) {
-                    Logger.debug("We detected: ", t);
-                    break
+        triggerCallbacks = [];
+        triggers.forEach((e => {
+                triggerCallbacks.push(e[detectionType])
+            }));
+
+        for (let e = 0; e < triggers.length; e++){
+            triggers[e][detectionType] = function() {
+                Logger.debug("Detect event: ", detectionType, "on element, ", triggers[e]);
+                for (let i of validInputs){
+                    let t = i.value.trim();
+                    if (foundId(t)) {
+                        Logger.debug("We detected: ", t);
+                        stopDetection();
+                        break;
+                    }
+                }
+                // Trigger existing callbacks if any.
+                if(triggerCallbacks[e]){
+                    triggerCallbacks[e](...arguments);
                 }
             }
         }
     }
 
+    function stopDetection() {
+        Logger.debug("Detection stopped.");
+        stopDynamicObserver();
+        clearDetectionHooks();
+    }
+
+    function clearDetectionHooks() {
+        for (let e = 0; e < triggers.length; e++) triggers[e][config.detectionEventType] = triggerCallbacks[e]
+        triggers = [];
+        triggerCallbacks = [];
+    }
+
     function foundId(e) {
-        return foundEmail(e) || foundPhone(e)
+        return foundEmail(e) || foundPhone(e);
     }
 
     function foundEmail(e) {
@@ -79,31 +135,28 @@
         if (config.detectionSubject.includes("email") && g.test(e)) {
             const t = normalizeEmail(e.match(g)[0]);
             Logger.debug("We detected email: " + t);
-            stopDynamicObserver();
             dispatch(t, "email");
             return true;
         }
         return false;
     }
 
-    function foundPhone(e){
+    function foundPhone(e) {
         return false;
     }
 
-    function normalizeEmail(e){
+    function normalizeEmail(e) {
         return e.toLowerCase().trim();
     }
 
     function startDynamicObserver() {
+        if(!config.detectDynamicNodes){
+            return;
+        }
         new MutationObserver((function(e, t) {
-            dynamicObserver = t;
             Logger.debug("Detected dynamically added nodes.");
-            if(dynamicObserverStopped){
-                t.disconnect();
-                Logger.debug("Checking for dynamically added elements is turned off.")
-                return;
-            }
-            detectEvent();
+            dynamicObserver = t;
+            restartDetection();
         })).observe(document.querySelector("body"), {
             childList: true,
             subtree: true
@@ -114,12 +167,28 @@
         if(!config.detectDynamicNodes){
             return;
         }
-        dynamicObserverStopped = true;
         Logger.debug("Checking for dynamically added elements is turned off.");
         if(dynamicObserver){
             dynamicObserver.disconnect();
             dynamicObserver = null;
         }
+    }
+
+    // {
+    //     "type": "email",
+    //     "identifier": "example@thetradedesk.com"
+    // }
+    function setIdentifier(details) {
+        if(!details || !details.type || !details.identifier){
+            Logger.error("wrong identifier format");
+            return;
+        }
+        if(details.type !== "email"){
+            Logger.error("Identifier type is not supported, ", detailsdetails.type);
+            return;
+        }
+        dispatch(details.identifier, details.type);
+        stopDetection();
     }
 
     function dispatch(i, t) {
@@ -149,7 +218,7 @@
         }
     }
 
-    function collectElements(cssSelectors){
+    function collectElements(cssSelectors) {
         let collections = [];
         for (let e of cssSelectors){
             if (e.length > 0) {
@@ -167,17 +236,18 @@
                         t[n].contentDocument.querySelectorAll(e).forEach((e => {
                             collections.includes(e) || collections.push(e)
                         }))
-                    }   
+                    }
             }
         }
-        return collections;       
+        return collections;
     }
 
-    window.ttd = {};
-    window.ttd.startDetection = startDetection;
-    window.ttd.enableDebug = () => updateLogLevl("debug");
-    window.ttd.disableLog = () => updateLogLevl(null);
-}();
+    window.ttdPixel = {};
+    window.ttdPixel.startDetection = startDetection;
+    window.ttdPixel.setIdentifier = setIdentifier;
+    window.ttdPixel.enableDebug = () => updateLogLevl("debug");
+    window.ttdPixel.disableLog = () => updateLogLevl(null);
+})();
 
 /**
  * Pulled from jQuery.
@@ -526,7 +596,8 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
         //     "cssSelectors": ["input[type=email]"],
         //     "detectionSubject": ["email"],
         //     "detectionEventType": "onclick",
-        //     "triggerElements": ["button.form-submit"]
+        //     "triggerElements": ["button.form-submit"],
+        //     "detectDynamicNodes": false
         // }
         let enableUID = false;
         if(uid_config !== undefined){
@@ -535,9 +606,9 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
         }
 
         if(enableUID) {
-            var detectionPromise = new Promise((resolve) => {
-                window.ttd.startDetection(uid_config);
-                window.addEventListener("detected-identifier", async function(e){
+            let detectionPromise = new Promise((resolve) => {
+                window.ttdPixel.startDetection(uid_config);
+                window.addEventListener("detected-identifier", function(e){
                     // currently only detect email
                     resolve(e.detail.identifier);
                 });
@@ -553,7 +624,7 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
                     baseUrl: uid_config.baseUrl,
                   });
                   break;
-             
+
                 // The InitCompleted event occurs just once.
                 // If there was a valid UID2 token, it will be in payload.identity.
                 case "InitCompleted":
@@ -563,12 +634,12 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
                   else {
                     let email = await detectionPromise;
                     await __uid2.setIdentityFromEmail(
-                          email,
+                          email,    
                           uid_config
                     );
                   }
                   break;
-             
+
                 // The IdentityUpdated event will happen when a UID2 token was generated or refreshed.
                 case "IdentityUpdated":
                   await firePixelWithUID(payload.identity.advertising_token)
@@ -685,20 +756,18 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
             let title = "TTD Universal Pixel";
             legacyIframeCreatePromiseResolve(src_with_params);
 
-            console.log("fireLegacyPixel", src_with_params);
             createIFrameInternal(src_with_params, iFrameId, title)
         }
 
         async function firePixelWithUID(uid_token){
             let legacyIframeSrc = await legacyIframeCreatePromise;
             let src = legacyIframeSrc +
-                "&uid=" +
+                "&uiddt=" +
                 uid_token;
 
             let iFrameId = "universal_pixel_" + tag_ids.join("_") + "_uid";
             let title = "TTD Universal Pixel with UID";
             
-            console.log("firePixelWithUID", src);
             createIFrameInternal(src, iFrameId, title)
         }
 
@@ -734,7 +803,7 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
             }
             else {
                 addIframe();
-            }    
+            }
         }
 
         // GDPR V2 Alert!!!
