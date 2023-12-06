@@ -606,11 +606,11 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
 
         if(enableUID) {
             let detectionPromise = new Promise((resolve) => {
-                window.ttdPixel.startDetection(uid_config);
                 window.addEventListener("detected-identifier", function(e){
                     // currently only detect email
                     resolve(e.detail.identifier);
                 });
+                window.ttdPixel.startDetection(uid_config);
             });
 
             window.__uid2 = window.__uid2 || {};
