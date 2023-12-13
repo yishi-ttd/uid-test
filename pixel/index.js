@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
 	var setIdBtn = document.getElementById("setIdBtn");
 	setIdBtn.addEventListener("click",function(e){
-		window.ttdPixelEventsLayer  = window.ttdPixelEventsLayer || [];
-		window.ttdPixelEventsLayer.push(["identifier", {
+		window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
+		window.ttdPixelEventsLayer.push(["setIdentifier", {
 			"type":"email",
 			"identifier":"1@abc.com"
 		}]);
