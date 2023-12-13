@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', function(){
 		console.log("click triggered");
 	})
 
-	var setIdBtn = document.getElementById("setIdBtn");
-	setIdBtn.addEventListener("click",function(e){
-		window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
-		window.ttdPixelEventsLayer.push(["setIdentifier", {
-			"type":"email",
-			"identifier":"1@abc.com"
-		}]);
-	})
+	// var setIdBtn = document.getElementById("setIdBtn");
+	// setIdBtn.addEventListener("click",function(e){
+	// 	window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
+	// 	window.ttdPixelEventsLayer.push(["setIdentifier", {
+	// 		"type":"email",
+	// 		"identifier":"1@abc.com"
+	// 	}]);
+	// })
 }, false);
