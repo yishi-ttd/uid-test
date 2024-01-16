@@ -482,7 +482,7 @@ var ttd_dom_ready = (function () {
 
 //Define the TTDUniversalPixelApi object.
 function TTDUniversalPixelApi(optionalTopLevelUrl) {
-    _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl)
+    return new _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl);
 }
 
 function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
