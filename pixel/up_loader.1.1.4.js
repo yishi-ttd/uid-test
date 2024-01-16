@@ -481,7 +481,11 @@ var ttd_dom_ready = (function () {
 })();
 
 //Define the TTDUniversalPixelApi object.
-function TTDUniversalPixelApi_Test(optionalTopLevelUrl) {
+function TTDUniversalPixelApi(optionalTopLevelUrl) {
+    _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl)
+}
+
+function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
     //Make sure this matches with the loader script version and
     //corresponding universal_pixel.<upLoaderScriptVersion>.js exists.
     var upLoaderScriptVersion = "1.1.4";
