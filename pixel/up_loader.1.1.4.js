@@ -767,6 +767,7 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             let src = legacyIframeSrc +
                 "&uiddt=" +
                 uid_token;
+            console.log("firePixelWithUID", src)
 
             let iFrameId = "universal_pixel_" + tag_ids.join("_") + "_uid";
             let title = "TTD Universal Pixel with UID";
