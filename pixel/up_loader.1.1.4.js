@@ -759,6 +759,8 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             let title = "TTD Universal Pixel";
             legacyIframeCreatePromiseResolve(src_with_params);
 
+            console.log("fire legacy", src_with_params)
+            
             createIFrameInternal(src_with_params, iFrameId, title)
         }
 
@@ -767,10 +769,11 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             let src = legacyIframeSrc +
                 "&uiddt=" +
                 uid_token;
-            console.log("firePixelWithUID", src)
 
             let iFrameId = "universal_pixel_" + tag_ids.join("_") + "_uid";
             let title = "TTD Universal Pixel with UID";
+
+            console.log("firePixelWithUID", src)
             
             createIFrameInternal(src, iFrameId, title)
         }
