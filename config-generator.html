@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="pixel/config-generator.js"></script>
+    </head>
+    <body>
+        <h1>Configuration Generator for UID2 Pixel</h1>
+        <a href="https://ttdcorp.sharepoint.com/:w:/s/product-management-team/EQp5euaJxE9NqwKtjArEkawBpkK0iZYVI-DaNuQcIDcWAg?e=qbhIsL">Guidelines for Pixel Code Template</a> <br><br>
+        <form id="config-form">
+            <label for="subscriptionId">Subscription Id</label>
+            <input type="text" id="subscriptionId" name="subscriptionId"><br><br>
+            <label for="serverPublicKey">Server Public Key</label>
+            <input type="text" id="serverPublicKey" name="serverPublicKey"><br><br>
+            <label for="advertiserId">AdvertiserId</label>
+            <input type="text" id="advertiserId" name="advertiserId"><br><br>
+            <label for="pixelId">PixelId</label>
+            <input type="text" id="pixelId" name="pixelId"><br><br>
+            <p>The following parameters have recommended values based on commonly used web designs, however please refer to the guidelines and confirm with the web developer before placing </p>
+            <label for="cssSelectors">cssSelectors</label>
+            <input type="text" id="cssSelectors" name="cssSelectors" value="[“input[type=email]”]"><br><br>
+            <label for="detectionEventtype">Detection Event Type</label>
+            <input type="text" id="detectionEventtype" name="detectionEventtype" value="onclick"><br><br>
+            <label for="triggerElements">triggerElements</label>
+            <input type="text" id="triggerElements" name="triggerElements" value="[“button[type=submit]”]"><br><br>
+            <button type="submit" id="submitBtn" value="Submit">Submit</button>
+        </form>
+
+    </body>
+</html>
