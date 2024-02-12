@@ -29,15 +29,15 @@ document.addEventListener('DOMContentLoaded', function(){
                 if (typeof TTDUniversalPixelApi === 'function') { 
                     var universalPixelApi = new TTDUniversalPixelApi(); 
                     var uidConfig = { 
-                        "subscriptionId": ${subscriptionId.value}, 
-                        "serverPublicKey": ${serverPublicKey.value}, 
+                        "subscriptionId": "${subscriptionId.value}", 
+                        "serverPublicKey": "${serverPublicKey.value}", 
                         "cssSelectors": ${cssSelectors.value}, 
                         "detectionSubject": ["email"], 
-                        "detectionEventType": ${detectionEventtype.value}, 
+                        "detectionEventType": "${detectionEventtype.value}", 
                         "triggerElements": ${triggerElements.value}, 
                         "detectDynamicNodes": true 
                     } 
-                    universalPixelApi.init(${advertiserId.value}, ${pixelId.value}, "https://insight.adsrvr.org/track/up", null, uidConfig);
+                    universalPixelApi.init("${advertiserId.value}", "${pixelId.value}", "https://insight.adsrvr.org/track/up", null, uidConfig);
                 } 
             });
         </script>`;
