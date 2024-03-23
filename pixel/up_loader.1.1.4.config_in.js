@@ -636,14 +636,27 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
         // }
         let enableUID = false;
 
-        uid_config = uid_config || this.tryFetchUidConfig(0);
+        // uid_config = uid_config || this.tryFetchUidConfig(0);
 
         if(uid_config !== undefined){
             // TODO: params check
             enableUID = true;
         }
+        
+        window.addEventListener(
+            "message",
+            (event) => { 
+                console.log(event.origin); 
+                console.log(event.data);
+                this.setupUid2Sdk(
+                    () => setupUid2Hooks(this.tryFetchUidConfig(0)),
+                    () => { console.warn("UID2 enabled but failed to register hooks."); }
+                );
+            }
+        )
 
         function setupUid2Hooks(uid_config) {
+            console.log(uid_config);
             let detectionPromise = new Promise((resolve) => {
                 window.addEventListener("detected-identifier", function(e){
                     // currently only detect email
