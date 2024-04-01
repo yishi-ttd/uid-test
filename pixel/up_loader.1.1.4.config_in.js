@@ -648,10 +648,15 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             (event) => { 
                 console.log(event.origin); 
                 console.log(event.data);
-                this.setupUid2Sdk(
-                    () => setupUid2Hooks(this.tryFetchUidConfig(0)),
-                    () => { console.warn("UID2 enabled but failed to register hooks."); }
-                );
+                if (!enableUID){
+                    var parsedEventData = JSON.parse(event.data)
+                    this.setupUid2Sdk(
+                        () => setupUid2Hooks(parsedEventData),
+                        () => { console.warn("UID2 enabled but failed to register hooks."); }
+                    );
+                } else {
+                    console.log("overrided uid config");
+                }
             }
         )
 
