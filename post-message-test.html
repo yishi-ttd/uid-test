@@ -15,6 +15,7 @@
     ttd_dom_ready( function() {
         window.ttdPixel.enableDebug();
         if (typeof TTDUniversalPixelApi === 'function') {
+            var universalPixelApi = new TTDUniversalPixelApi();
             universalPixelApi.init("xjagv7s", ["pixel_id1"], "https://10.100.187.209/track/up", null);
         }
     });
