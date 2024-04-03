@@ -488,7 +488,7 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
 function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
     //Make sure this matches with the loader script version and
     //corresponding universal_pixel.<upLoaderScriptVersion>.js exists.
-    var upLoaderScriptVersion = "1.1.4";
+    var upLoaderScriptVersion = "1.1.5";
 
     this.getVersion = function () {
         return upLoaderScriptVersion;
