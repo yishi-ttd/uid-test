@@ -10,34 +10,12 @@
     <button class= "form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
 </form>
 
-<script type="text/javascript">
-    function setId(){
-        window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
-        window.ttdPixelEventsLayer.push(["setIdentifier", {
-            "type":"email",
-            "identifier":"1@abc.com"
-        }]);
-    }
-</script>
-
-<button id="setIdBtn" onclick="setId()"> test set identity </button>
-
 <script src="pixel/up_loader.1.1.0.new.js"></script>
-<script defer src="https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js"></script>
 <script type="text/javascript">
     ttd_dom_ready( function() {
-        window.ttdPixel.enableDebug();
         if (typeof TTDUniversalPixelApi === 'function') {
             var universalPixelApi = new TTDUniversalPixelApi();
-            var uidConfig = {
-                "subscriptionId": "veiV33ZvM6",
-                "serverPublicKey": "UID2-X-P-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaOj7F8H8TOQOdnzxhwEwIsJu+JA7uUxAY1L1ysOWfFvuFt3K1VWcCSAT68L36+9zCeiGBwV54etjh0ZMRHmRVA==",
-                "cssSelectors": ["input[type=email]"],
-                "detectionSubject": ["email"],
-                "detectionEventType": "onclick",
-                "triggerElements": ["button.form-submit"]
-            }
-            universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null, uidConfig);
+            universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null);
         }
     });
 </script>

@@ -64,10 +64,10 @@
         const params = args[1];
         switch (method) {
             case "setIdentifier":
-                setIdentifier(params);
-                break;
+                 setIdentifier(params);
+                 break;
             default:
-                throw "method not implemented";
+              throw "method not implemented";
         }
     }
 
@@ -91,8 +91,8 @@
 
         triggerCallbacks = [];
         triggers.forEach((e => {
-            triggerCallbacks.push(e[detectionType])
-        }));
+                triggerCallbacks.push(e[detectionType])
+            }));
 
         for (let e = 0; e < triggers.length; e++){
             triggers[e][detectionType] = function() {
@@ -153,15 +153,12 @@
             return;
         }
         new MutationObserver((function(e, t) {
-            setTimeout(() => {
-                Logger.debug("Detected dynamically added nodes.");
-                dynamicObserver = t;
-                restartDetection();
-            }, (triggers.length > 0) ? 500 : 0);
+            Logger.debug("Detected dynamically added nodes.");
+            dynamicObserver = t;
+            restartDetection();
         })).observe(document.querySelector("body"), {
             childList: true,
-            subtree: true,
-            attributes: true
+            subtree: true
         })
     }
 
@@ -230,23 +227,17 @@
             }
         }
         let h = window.location.hostname,
-            t = document.getElementsByTagName("iframe");
+        t = document.getElementsByTagName("iframe");
         for (let n = 0; n < t.length; n++){
-            const iframe = t[n];
-            if (canAccessIframe(h, iframe)){
-                iframe.removeEventListener('load', restartDetection);
-                iframe.addEventListener('load', restartDetection);
-                if (iframe.contentDocument){
-                    for (let e of cssSelectors)
-                        if (e.length > 0) {
-                            iframe.contentDocument.querySelectorAll(e).forEach((e => {
-                                collections.includes(e) || collections.push(e)
-                            }))
-                        }
-                }
+            if (canAccessIframe(h, t[n]) && t[n].contentDocument){
+                for (let e of cssSelectors)
+                    if (e.length > 0) {
+                        t[n].contentDocument.querySelectorAll(e).forEach((e => {
+                            collections.includes(e) || collections.push(e)
+                        }))
+                    }
             }
         }
-
         return collections;
     }
 
@@ -491,10 +482,10 @@ var ttd_dom_ready = (function () {
 
 //Define the TTDUniversalPixelApi object.
 function TTDUniversalPixelApi(optionalTopLevelUrl) {
-    return new _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl);
+    return new _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl);
 }
 
-function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
+function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
     //Make sure this matches with the loader script version and
     //corresponding universal_pixel.<upLoaderScriptVersion>.js exists.
     var upLoaderScriptVersion = "1.1.4";
@@ -509,14 +500,29 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
             scriptElement.setAttribute("defer", true);
             scriptElement.setAttribute("src", "https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js");
             scriptElement.addEventListener("load", () => {
+                console.log("uid2-sdk-3.2.0.js loaded from up_loader.js");
                 onLoad();
             });
             scriptElement.addEventListener("error", (e) => {
+                console.warn("failed loading uid2-sdk-3.2.0.js from up_loader.js", e);
                 onError();
             });
             document.body.appendChild(scriptElement);
         } else {
             onLoad();
+        }
+    }
+
+    this.tryFetchUidConfig = function(pixelId) {
+        return {
+            "baseUrl": "http://localhost:8080",
+            "subscriptionId": "4WvryDGbR5",
+            "serverPublicKey": "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
+            "cssSelectors": ["input[type=email]"],
+            "detectionSubject": ["email"],
+            "detectionEventType": "onclick",
+            "triggerElements": ["button.form-submit"],
+            "detectDynamicNodes": true
         }
     }
 
@@ -630,11 +636,32 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
         // }
         let enableUID = false;
 
-        if (uid_config !== undefined){
+        // uid_config = uid_config || this.tryFetchUidConfig(0);
+
+        if(uid_config !== undefined){
+            // TODO: params check
             enableUID = true;
         }
+        
+        window.addEventListener(
+            "message",
+            (event) => { 
+                console.log(event.origin); 
+                console.log(event.data);
+                if (!enableUID){
+                    var parsedEventData = JSON.parse(event.data)
+                    this.setupUid2Sdk(
+                        () => setupUid2Hooks(parsedEventData),
+                        () => { console.warn("UID2 enabled but failed to register hooks."); }
+                    );
+                } else {
+                    console.log("overrided uid config");
+                }
+            }
+        )
 
         function setupUid2Hooks(uid_config) {
+            console.log(uid_config);
             let detectionPromise = new Promise((resolve) => {
                 window.addEventListener("detected-identifier", function(e){
                     // currently only detect email
@@ -646,34 +673,34 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
             window.__uid2 = window.__uid2 || {};
             window.__uid2.callbacks = window.__uid2.callbacks || [];
             window.__uid2.callbacks.push(async (eventType, payload) => {
-                switch (eventType) {
-                    // The SdkLoaded event occurs just once.
-                    case "SdkLoaded":
-                        __uid2.init({
-                            baseUrl: uid_config.baseUrl,
-                        });
-                        break;
+              switch (eventType) {
+                // The SdkLoaded event occurs just once.
+                case "SdkLoaded":
+                  __uid2.init({
+                    baseUrl: uid_config.baseUrl,
+                  });
+                  break;
 
-                    // The InitCompleted event occurs just once.
-                    // If there was a valid UID2 token, it will be in payload.identity.
-                    case "InitCompleted":
-                        if (payload.identity) {
-                            await firePixelWithUID(payload.identity.advertising_token)
-                        }
-                        else {
-                            let email = await detectionPromise;
-                            await __uid2.setIdentityFromEmail(
-                                email,
-                                uid_config
-                            );
-                        }
-                        break;
+                // The InitCompleted event occurs just once.
+                // If there was a valid UID2 token, it will be in payload.identity.
+                case "InitCompleted":
+                  if (payload.identity) {
+                    await firePixelWithUID(payload.identity.advertising_token)
+                  }
+                  else {
+                    let email = await detectionPromise;
+                    await __uid2.setIdentityFromEmail(
+                          email,    
+                          uid_config
+                    );
+                  }
+                  break;
 
-                    // The IdentityUpdated event will happen when a UID2 token was generated or refreshed.
-                    case "IdentityUpdated":
-                        await firePixelWithUID(payload.identity.advertising_token)
-                        break;
-                }
+                // The IdentityUpdated event will happen when a UID2 token was generated or refreshed.
+                case "IdentityUpdated":
+                  await firePixelWithUID(payload.identity.advertising_token)
+                  break;
+              }
             });
         }
 
@@ -683,25 +710,6 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
                 () => { console.warn("UID2 enabled but failed to register hooks."); }
             );
         }
-
-        window.addEventListener(
-            "message",
-            (event) => {
-                const e = new URL(e.origin);
-                if (e.hostname.endsWith(".adsrvr.org")) {
-                    // if local uid_config exists, skip parsing
-                    if (!enableUID) {
-                        if (typeof event.data == "string") {
-                            const parsedEventData = JSON.parse(event.data)
-                            this.setupUid2Sdk(
-                                () => setupUid2Hooks(parsedEventData),
-                                () => { console.warn("UID2 enabled but failed to register hooks."); }
-                            );
-                        }
-                    }
-                }
-            }
-        )
 
         var listenToGppRequestTimeout = null;
         function listenToGppAndFirePixel() {
@@ -811,6 +819,8 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
             let title = "TTD Universal Pixel";
             legacyIframeCreatePromiseResolve(src_with_params);
 
+            console.log("fire legacy", src_with_params)
+            
             createIFrameInternal(src_with_params, iFrameId, title)
         }
 
@@ -823,6 +833,8 @@ function _TTDUniversalPixelApi_1_1_5(optionalTopLevelUrl) {
             let iFrameId = "universal_pixel_" + tag_ids.join("_") + "_uid";
             let title = "TTD Universal Pixel with UID";
 
+            console.log("firePixelWithUID", src)
+            
             createIFrameInternal(src, iFrameId, title)
         }
 
