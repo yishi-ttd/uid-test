@@ -1,10 +1,26 @@
-﻿<html>
-<head></head>
+﻿<html>=
 <body>
-<div id="testing">
+<div id="universalPixelContainer">
     <script type="text/javascript">
-        parent.postMessage("passing message back from iframe", "*");
+        (function(global) {
+        var ttdcm = new TTDCM();
+        ttdcm.init( [] );
+        })(this);
+    </script>
+    <script type="text/javascript">
+        console.log(window.parent.location);
+        console.log(document.referrer);
+        parent.postMessage(`{
+            "baseUrl": "http://localhost:8080",
+                "subscriptionId": "4WvryDGbR5",
+                "serverPublicKey": "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
+                "cssSelectors": ["input[type=email]"],
+                "detectionSubject": ["email"],
+                "detectionEventType": "onclick",
+                "triggerElements": ["button.form-submit"],
+                "detectDynamicNodes": true
+        }`, window.origin);
     </script>
 </div>
-</body>
-</html>
+
+</body></html>
