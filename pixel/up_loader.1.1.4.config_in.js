@@ -630,6 +630,13 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             enableUID = true;
         }
 
+        if(enableUID) {
+            this.setupUid2Sdk(
+                () => setupUid2Hooks(uid_config),
+                () => { console.warn("UID2 enabled but failed to register hooks."); }
+            );
+        }
+
         window.addEventListener(
             "message",
             (event) => {
@@ -693,13 +700,6 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             });
         }
 
-        if(enableUID) {
-            this.setupUid2Sdk(
-                () => setupUid2Hooks(uid_config),
-                () => { console.warn("UID2 enabled but failed to register hooks."); }
-            );
-        }
-
         var listenToGppRequestTimeout = null;
         function listenToGppAndFirePixel() {
             // https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/CMP%20API%20Specification.md
@@ -728,25 +728,6 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             }
             return gppObject;
         }
-
-        window.addEventListener(
-            "message",
-            (event) => {
-                const e = new URL(event.origin);
-                if (e.hostname.endsWith("")) {
-                    // if local uid_config exists, skip parsing
-                    if (!enableUID) {
-                        if (typeof event.data == "string") {
-                            const parsedEventData = JSON.parse(event.data)
-                            this.setupUid2Sdk(
-                                () => setupUid2Hooks(parsedEventData),
-                                () => { console.warn("UID2 enabled but failed to register hooks."); }
-                            );
-                        }
-                    }
-                }
-            }
-        )
 
         var listenToGppRequestHasTimedOut = false;
         function listenToGppCallback(evt, success) {
