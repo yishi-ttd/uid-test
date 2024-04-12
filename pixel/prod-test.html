@@ -1,0 +1,27 @@
+﻿<html>
+<head>
+    <script src="pixel/index.js"></script>
+</head>
+<body>
+<form>
+    <input type="text" id="fname" name="fname" value="John"><br>
+    <input type="text" id="lname" name="lname" value="Doe"><br><br>
+    <input type="email" id="email" name="email" value="abc@def.com"><br><br>
+    <button class= "form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
+</form>
+
+<script src="pixel/up_loader.1.1.4.config_in.js"></script>
+<script type="text/javascript">
+    ttd_dom_ready( function() {
+        window.ttdPixel.enableDebug();
+        if (typeof TTDUniversalPixelApi === 'function') {
+            var universalPixelApi = new TTDUniversalPixelApi();
+            universalPixelApi.init("xjagv7s", ["510nhqa"], "http://use-trkl-fc25d9.adsrvr.net/track/up", null);
+        }
+    });
+</script>
+
+<!--<iframe id="test" src="iframe.html"></iframe>-->
+
+</body>
+</html>
