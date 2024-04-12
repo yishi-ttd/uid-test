@@ -570,7 +570,8 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             + "&ref=" + encodeURIComponent(ref)
             + "&" + upParams
             //This is the script version adn should always match the version of the loader script.
-            + "&upv=" + this.getVersion();
+            + "&upv=" + this.getVersion()
+            + "&paapi=1";
 
         if (dyn_params) {
             for(var param in dyn_params) {
