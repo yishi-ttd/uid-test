@@ -513,19 +513,6 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
         }
     }
 
-    this.tryFetchUidConfig = function(pixelId) {
-        return {
-            "baseUrl": "http://localhost:8080",
-            "subscriptionId": "4WvryDGbR5",
-            "serverPublicKey": "UID2-X-L-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEtXJdTSZAYHvoRDWiehMHoWF1BNPuqLs5w2ZHiAZ1IJc7O4/z0ojPTB0V+KYX/wxQK0hxx6kxCvHj335eI/ZQsQ==",
-            "cssSelectors": ["input[type=email]"],
-            "detectionSubject": ["email"],
-            "detectionEventType": "onclick",
-            "triggerElements": ["button.form-submit"],
-            "detectDynamicNodes": true
-        }
-    }
-
     // universal_pixel.js
     this.init = function (adv, tag_ids, base_src, dyn_params, uid_config) {
 
@@ -583,7 +570,8 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             + "&ref=" + encodeURIComponent(ref)
             + "&" + upParams
             //This is the script version adn should always match the version of the loader script.
-            + "&upv=" + this.getVersion();
+            + "&upv=" + this.getVersion()
+            + "&paapi=1";
 
         if (dyn_params) {
             for(var param in dyn_params) {
@@ -642,20 +630,29 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
             // TODO: params check
             enableUID = true;
         }
-        
+
+        if(enableUID) {
+            this.setupUid2Sdk(
+                () => setupUid2Hooks(uid_config),
+                () => { console.warn("UID2 enabled but failed to register hooks."); }
+            );
+        }
+
         window.addEventListener(
             "message",
-            (event) => { 
-                console.log(event.origin); 
-                console.log(event.data);
-                if (!enableUID){
-                    var parsedEventData = JSON.parse(event.data)
-                    this.setupUid2Sdk(
-                        () => setupUid2Hooks(parsedEventData),
-                        () => { console.warn("UID2 enabled but failed to register hooks."); }
-                    );
-                } else {
-                    console.log("overrided uid config");
+            (event) => {
+                const e = new URL(event.origin);
+                if (e.hostname.endsWith("")) {
+                    // if local uid_config exists, skip parsing
+                    if (!enableUID) {
+                        if (typeof event.data == "string") {
+                            const parsedEventData = JSON.parse(event.data)
+                            this.setupUid2Sdk(
+                                () => setupUid2Hooks(parsedEventData),
+                                () => { console.warn("UID2 enabled but failed to register hooks."); }
+                            );
+                        }
+                    }
                 }
             }
         )
@@ -702,13 +699,6 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
                   break;
               }
             });
-        }
-
-        if(enableUID) {
-            this.setupUid2Sdk(
-                () => setupUid2Hooks(uid_config),
-                () => { console.warn("UID2 enabled but failed to register hooks."); }
-            );
         }
 
         var listenToGppRequestTimeout = null;
