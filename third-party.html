@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<body>
+third party cookies are <span id="result"/>
+<iframe id="test" src="https://yishi-ttd.github.io/uid-test/pixel/start.html" style="display:none" onload="detectThirdPartyCookie(this)"></iframe>
+</body>
+<script>
+    var receiveMessage = function (evt) {
+        if (evt.data === 'MM:3PCunsupported') {
+            document.getElementById('result').innerHTML = 'not supported';
+        } else if (evt.data === 'MM:3PCsupported') {
+            document.getElementById('result').innerHTML = 'supported';
+        }
+    };
+    function detectThirdPartyCookie() {
+        console.log(document.cookie)
+    }
+    window.addEventListener("message", receiveMessage, false);
+</script>
+</html>
