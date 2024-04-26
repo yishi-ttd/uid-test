@@ -2,7 +2,7 @@
 <html lang="en">
 <body>
 third party cookies are <span id="result"/>
-<iframe id="test" src="https://yishi-ttd.github.io/uid-test/pixel/start.html" style="display:none" onload="detectThirdPartyCookie(this)"></iframe>
+<iframe id="test" src="https://yishi-ttd.github.io/uid-test/pixel/start.html" style="display:none"></iframe>
 </body>
 <script>
     var receiveMessage = function (evt) {
@@ -12,9 +12,6 @@ third party cookies are <span id="result"/>
             document.getElementById('result').innerHTML = 'supported';
         }
     };
-    function detectThirdPartyCookie() {
-        console.log(document.cookie)
-    }
     window.addEventListener("message", receiveMessage, false);
 </script>
 </html>
