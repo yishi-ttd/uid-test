@@ -498,7 +498,7 @@ function _TTDUniversalPixelApi_1_1_4(optionalTopLevelUrl) {
         if (window.__uid2 === undefined) {
             let scriptElement = document.createElement("script");
             scriptElement.setAttribute("defer", true);
-            scriptElement.setAttribute("src", "https://cdn.prod.uidapi.com/uid2-sdk-3.2.0.js");
+            scriptElement.setAttribute("src", "pixel/uid2-sdk-3.2.0.js");
             scriptElement.addEventListener("load", () => {
                 console.log("uid2-sdk-3.2.0.js loaded from up_loader.js");
                 onLoad();
