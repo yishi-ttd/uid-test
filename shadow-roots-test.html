@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <script src="pixel/index.js"></script>
+    </head>
+    <body>
+        <div id="shadow-host">
+            <!-- The shadow DOM structure we are creating:
+            #shadow
+            <div id="login-form">
+                <div id="user-info">
+                    <div id="name-text">
+                    #shadow
+                        <input type="text" id="fname" name="fname" value="John"><br>
+                        <input type="text" id="lname" name="lname" value="Doe"><br><br>
+                    </div>
+                    <div id="email-text">
+                    #shadow
+                        <input type="email" id="email" name="email" value="abc@def.com"><br><br>
+                    </div>
+                </div>
+                <div id="submit-button">
+                    <button class="form-submit" type="submit" id="submitBtn" value="Submit">Submit</button>
+                </div>
+            </div>
+            -->
+        </div>
+
+        <script type="text/javascript">
+            // setting up shadow DOM;
+            // test it works when email input and submit button are both in shadow DOM, potentially different shadow roots.
+            const host = document.querySelector("#shadow-host");
+            const form_shadow = host.attachShadow({ mode: "open" });
+            const login_form_div = document.createElement("div"); login_form_div.id = "login-form";
+            const user_info_div = document.createElement("div"); user_info_div.id = "user-info";
+            const name_text_div = document.createElement("div"); name_text_div.id = "name-text";
+            const email_text_div = document.createElement("div"); email_text_div.id = "email-text";
+            const submit_button_div = document.createElement("div"); submit_button_div.id = "submit-button";
+
+            const name_shadow = name_text_div.attachShadow({ mode: "open" });
+            const email_shadow = email_text_div.attachShadow({ mode: "open" });
+
+            form_shadow.appendChild(login_form_div);
+            login_form_div.appendChild(user_info_div);
+            user_info_div.appendChild(name_text_div);
+            user_info_div.appendChild(email_text_div);
+            form_shadow.appendChild(submit_button_div);
+
+            const fname_input =  document.createElement("input");
+            fname_input.id = "fname";
+            fname_input.setAttribute("type", "text");
+            fname_input.setAttribute("name", "fname");
+            fname_input.setAttribute("value", "John");
+            name_shadow.appendChild(fname_input);
+
+            const lname_input =  document.createElement("input");
+            lname_input.id = "lname";
+            lname_input.setAttribute("type", "text");
+            lname_input.setAttribute("name", "lname");
+            lname_input.setAttribute("value", "Doe");
+            name_shadow.appendChild(lname_input);
+
+            const email_input = document.createElement("input");
+            email_input.id = "email";
+            email_input.setAttribute("type", "email");
+            email_input.setAttribute("name", "email");
+            email_input.setAttribute("value", "abc@def.com");
+            email_shadow.appendChild(email_input);
+
+            const submit_button = document.createElement("button");
+            submit_button.id = "submitBtn";
+            submit_button.setAttribute("class", "form-submit");
+            submit_button.setAttribute("type", "submit");
+            submit_button.setAttribute("value", "Submit");
+            submit_button.textContent = "Submit";
+            submit_button_div.appendChild(submit_button);
+        </script>
+
+        <script type="text/javascript">
+            function setId(){
+                window.ttdPixelEventsLayer = window.ttdPixelEventsLayer || [];
+                window.ttdPixelEventsLayer.push(["setIdentifier", {
+                    "type":"email",
+                    "identifier":"1@abc.com"
+                }]);
+            }
+        </script>
+
+        <button id="setIdBtn" onclick="setId()"> test set identity </button>
+
+        <script src="pixel/up_loader.1.1.6.shadowroot_fix.js"></script>
+        <script type="text/javascript">
+            ttd_dom_ready( function() {
+                window.ttdPixel.enableDebug();
+                if (typeof _TTDUniversalPixelApi_1_1_6 === 'function') {
+                    var universalPixelApi = new _TTDUniversalPixelApi_1_1_6();
+                    var uidConfig = {
+                        "subscriptionId": "veiV33ZvM6",
+                        "serverPublicKey": "UID2-X-P-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEaOj7F8H8TOQOdnzxhwEwIsJu+JA7uUxAY1L1ysOWfFvuFt3K1VWcCSAT68L36+9zCeiGBwV54etjh0ZMRHmRVA==",
+                        "cssSelectors": ["input[type=email]"],
+                        "detectionSubject": ["email"],
+                        "detectionEventType": "onclick",
+                        "triggerElements": ["button.form-submit"]
+                    }
+                    universalPixelApi.init("xjagv7s", ["510nhqa"], "https://insight.adsrvr.org/track/up", null, uidConfig);
+                }
+            });
+        </script>
+
+    </body>
+</html>
