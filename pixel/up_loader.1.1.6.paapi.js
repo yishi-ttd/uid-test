@@ -562,7 +562,7 @@ function TTDUniversalPixelApi(optionalTopLevelUrl) {
 function _TTDUniversalPixelApi_1_1_6(optionalTopLevelUrl) {
     //Make sure this matches with the loader script version and
     //corresponding universal_pixel.<upLoaderScriptVersion>.js exists.
-    var upLoaderScriptVersion = "1.1.6";
+    var upLoaderScriptVersion = "1.1.4";  // TODO: change it to 1.1.6 once beacon supports it.
 
     this.getVersion = function () {
         return upLoaderScriptVersion;
