@@ -204,11 +204,12 @@
         if (!config.detectDynamicNodes) {
             return;
         }
-        new MutationObserver((function (e, t) {
+        scopedDynamicObservers[scopeName] = new MutationObserver((function (e, t) {
             Logger.debug("Detected dynamically added nodes.");
             scopedDynamicObservers[scopeName] = t;
             restartDetection(root, scopeName);
-        })).observe(root, {
+        }));
+        scopedDynamicObservers[scopeName].observe(root, {
             childList: true,
             subtree: true,
             attributes: true,
