@@ -615,7 +615,6 @@ function _TTDUniversalPixelApi_1_1_6(optionalTopLevelUrl) {
                 for (var i = 4; i < arguments.length; i++) {
                     arguments[i - 1] = arguments[i];
                 }
-                arguments.pop();
             }
         }
 
@@ -625,11 +624,6 @@ function _TTDUniversalPixelApi_1_1_6(optionalTopLevelUrl) {
 
         var embedElem = document.getElementsByTagName('body')[0];
         if (!embedElem) {
-            return;
-        }
-
-        if (route_realtime_api) {
-            console.log("routing to realtime api");
             return;
         }
 
@@ -680,7 +674,7 @@ function _TTDUniversalPixelApi_1_1_6(optionalTopLevelUrl) {
             src_with_params = src_with_params + "&paapi=1"
         }
 
-        if (localStorage.getItem("UID2-sdk-identity")) {
+        if (localStorage.getItem("UID2-sdk-identity") === null) {
             src_with_params = src_with_params + "&uidcs=1"; // UID_IDENTITY_EXISTS = 1;
         }
 
@@ -924,12 +918,6 @@ function _TTDUniversalPixelApi_1_1_6(optionalTopLevelUrl) {
                 // The cmp hasn't loaded yet, keep trying with 200ms delay
                 setTimeout(function () { __cmp('ping', null, pingCmpCallback); }, 200);
             }
-        }
-
-
-        function getHostname(fullURL) {
-            let url = new URL(fullURL);
-            return url.hostname;
         }
 
         function firePixel(cmpResult) {
