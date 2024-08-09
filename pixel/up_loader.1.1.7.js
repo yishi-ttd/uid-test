@@ -127,7 +127,7 @@
                 // }
             }
             scopedEventListeners[scopeName].push(clickFunc);
-            triggers[e].addEventListener('click', clickFunc, { once: true });
+            triggers[e].addEventListener('click', clickFunc, { once: true, capture: true });
         }
 
         let sr = findShadowRoots(root);
@@ -150,7 +150,7 @@
         if (scopeName === "all") {
             for (const [sname, triggers] of Object.entries(scopedTriggers)) {
                 if (triggers) {
-                    for (let e = 0; e < triggers.length; e++) triggers[e].removeEventListener('click', scopedEventListeners[sname][e]); // triggers[e][config.detectionEventType] = scopedTriggerCallbacks[sname][e];
+                    for (let e = 0; e < triggers.length; e++) triggers[e].removeEventListener('click', scopedEventListeners[sname][e], {capture: true}); // triggers[e][config.detectionEventType] = scopedTriggerCallbacks[sname][e];
                 }
             }
             scopedTriggers = {}
@@ -163,7 +163,7 @@
                 if (sname.startsWith(scopeName)) {
                     // let triggerCallbacks = scopedTriggerCallbacks[sname];
                     if (triggers) {
-                        for (let e = 0; e < triggers.length; e++) triggers[e].removeEventListener('click', scopedEventListeners[sname][e]); // triggers[e][config.detectionEventType] = triggerCallbacks[e];
+                        for (let e = 0; e < triggers.length; e++) triggers[e].removeEventListener('click', scopedEventListeners[sname][e], {capture: true}); // triggers[e][config.detectionEventType] = triggerCallbacks[e];
                     }
                     scopeNamesToClear.push(sname);
                 }
